@@ -2,6 +2,8 @@ package com.sabahtalateh.jcstress_for_dummies.samples.counter;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -14,16 +16,15 @@ import static org.junit.Assert.assertThat;
 public class CounterTest {
     @Test
     public void testNonSyncCounter() throws Exception {
-
-        int tries = 2;
-        Set<Long> increments = new TreeSet<>();
+        int tries = 20;
+        List<Long> increments = new ArrayList<>();
         for (int i = 0; i < tries; i++) {
             Counter counter = new NonSyncCounter();
             increments.add(increment100(counter));
         }
 
         System.out.println(increments);
-
+        assertThat(increments.size(), not(1));
     }
 
     /**
@@ -32,19 +33,19 @@ public class CounterTest {
      * @throws InterruptedException exception.
      */
     private static long increment100(Counter counter) throws InterruptedException {
-        final int iters = 100;
+        final int size = 100;
 
-        Thread[] threads = new Thread[iters];
+        Thread[] threads = new Thread[size];
 
-        for (int i = 0; i < iters; i++) {
+        for (int i = 0; i < size; i++) {
             threads[i] = new Thread(new Incrementer(counter));
         }
 
-        for (int i = 0; i < iters; i++) {
+        for (int i = 0; i < size; i++) {
             threads[i].start();
         }
 
-        for (int i = 0; i < iters; i++) {
+        for (int i = 0; i < size; i++) {
             threads[i].join();
         }
 
@@ -69,12 +70,7 @@ public class CounterTest {
          */
         @Override
         public void run() {
-            try {
-                Thread.sleep(1);
-                this.counter.increment();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            this.counter.increment();
         }
     }
 }

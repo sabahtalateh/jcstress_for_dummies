@@ -7,7 +7,7 @@ public class SyncCounter implements Counter {
     volatile private long value = 0;
 
     @Override
-    synchronized public void increment() {
+    public synchronized void increment() {
         this.value++;
     }
 
